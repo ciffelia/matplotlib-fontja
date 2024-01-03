@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import japanize_matplotlib
+import matplotlib_fontja
 
 plt.plot([1, 2, 3, 4])
 plt.xlabel('簡単なグラフ')

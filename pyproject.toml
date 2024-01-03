@@ -1,0 +1,40 @@
+[project]
+name = "matplotlib-fontja"
+version = "0.1.0"
+dependencies = [
+    "matplotlib",
+]
+authors = [
+    { name = "uehara1414", email = "akiya.noface@gmail.com" },
+    { name = "Ciffelia", email = "mc.prince.0203@gmail.com" },
+]
+maintainers = [
+    { name = "Ciffelia", email = "mc.prince.0203@gmail.com" },
+]
+description = "matplotlibを日本語表示に対応させます。"
+readme = "README.md"
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/ciffelia/matplotlib-fontja"
+Repository = "https://github.com/ciffelia/matplotlib-fontja.git"
+Issues = "https://github.com/ciffelia/matplotlib-fontja/issues"
+Changelog = "https://github.com/ciffelia/matplotlib-fontja/blob/master/CHANGELOG.md"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+]
