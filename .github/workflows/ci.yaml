@@ -31,3 +31,29 @@ jobs:
         run: rye sync
 
       - run: python demo.py
+
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rye
+        run: |
+          TEMP_FILE=$(mktemp)
+          curl -fsSL "https://github.com/mitsuhiko/rye/releases/download/$RYE_VERSION/rye-x86_64-linux.gz" | gunzip > "$TEMP_FILE"
+          chmod +x "$TEMP_FILE"
+          "$TEMP_FILE" self install --yes
+          rm "$TEMP_FILE"
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+
+      - run: ./test/update_snapshot.sh
+
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot
+          path: test/snapshot
+          compression-level: 0
+
+      - name: Check snapshot
+        run: git diff --exit-code -- test/snapshot
