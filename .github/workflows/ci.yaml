@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+env:
+  RYE_VERSION: 0.16.0
+
+jobs:
+  run-demo:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rye
+        run: |
+          TEMP_FILE=$(mktemp)
+          curl -fsSL "https://github.com/mitsuhiko/rye/releases/download/$RYE_VERSION/rye-x86_64-linux.gz" | gunzip > "$TEMP_FILE"
+          chmod +x "$TEMP_FILE"
+          "$TEMP_FILE" self install --yes
+          rm "$TEMP_FILE"
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+
+      - name: Setup virtualenv
+        run: rye sync
+
+      - run: python demo.py
