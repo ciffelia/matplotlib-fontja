@@ -32,8 +32,14 @@ jobs:
 
       - run: python demo.py
 
-  test:
+  create-snapshot:
     runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python_version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
+        matplotlib_version:
+          ['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8']
     steps:
       - uses: actions/checkout@v4
 
@@ -46,14 +52,59 @@ jobs:
           rm "$TEMP_FILE"
           echo "$HOME/.rye/shims" >> $GITHUB_PATH
 
-      - run: ./test/update_snapshot.sh
+      - name: Generate snapshot path
+        run: |
+          echo "SNAPSHOT_DIR=test/snapshot" >> "$GITHUB_ENV"
+          echo "SNAPSHOT_FILENAME=py${PYTHON_VERSION}_mpl${MATPLOTLIB_VERSION}.png" >> "$GITHUB_ENV"
+        env:
+          PYTHON_VERSION: ${{ matrix.python_version }}
+          MATPLOTLIB_VERSION: ${{ matrix.matplotlib_version }}
 
-      - name: Upload snapshot
+      - name: Create a snapshot
+        run: |
+          mkdir -p "$SNAPSHOT_DIR"
+          rm -f "$SNAPSHOT_DIR/$SNAPSHOT_FILENAME"
+
+          rye pin "$PYTHON_VERSION" --no-update-requires-python
+
+          rm -f requirements.lock requirements-dev.lock
+          rye add "matplotlib==$MATPLOTLIB_VERSION.*"
+          rye sync
+
+          python test/create_snapshot.py "$SNAPSHOT_DIR/$SNAPSHOT_FILENAME"
+        env:
+          PYTHON_VERSION: ${{ matrix.python_version }}
+          MATPLOTLIB_VERSION: ${{ matrix.matplotlib_version }}
+        continue-on-error: true
+
+      - name: Upload a snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-${{ env.SNAPSHOT_FILENAME }}
+          path: ${{ env.SNAPSHOT_DIR }}/${{ env.SNAPSHOT_FILENAME }}
+          compression-level: 0
+
+  collect-snapshot:
+    needs: create-snapshot
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: rm -rf test/snapshot
+
+      - name: Download all snapshots
+        uses: actions/download-artifact@v4
+        with:
+          path: test/snapshot
+          pattern: snapshot-*
+          merge-multiple: true
+
+      - name: Upload all snapshots
         uses: actions/upload-artifact@v4
         with:
           name: snapshot
           path: test/snapshot
           compression-level: 0
 
-      - name: Check snapshot
+      - name: Compare snapshots
         run: git diff --exit-code -- test/snapshot
