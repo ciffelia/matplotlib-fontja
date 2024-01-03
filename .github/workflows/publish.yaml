@@ -1,0 +1,34 @@
+name: Publish package on PyPI
+
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+concurrency: ${{ github.workflow }}
+
+env:
+  RYE_VERSION: 0.16.0
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rye
+        run: |
+          TEMP_FILE=$(mktemp)
+          curl -fsSL "https://github.com/mitsuhiko/rye/releases/download/$RYE_VERSION/rye-x86_64-linux.gz" | gunzip > "$TEMP_FILE"
+          chmod +x "$TEMP_FILE"
+          "$TEMP_FILE" self install --yes
+          rm "$TEMP_FILE"
+          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+
+      - name: Build
+        run: rye build
+
+      - name: Publish
+        run: rye publish --token "$PYPI_TOKEN" --yes
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
