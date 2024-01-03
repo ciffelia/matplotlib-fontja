@@ -19,7 +19,7 @@ do
   for mpl in "${matplotlib_version[@]}"
   do
     rm -f requirements.lock requirements-dev.lock
-    if rye add "matplotlib~=$mpl"; then
+    if rye add "matplotlib==$mpl.*"; then
       rye sync
       python "$test_script" "$snapshot_dir/py${py}_mpl${mpl}.png"
     fi
