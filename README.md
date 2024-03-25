@@ -2,6 +2,7 @@
 
 [![CI status](https://github.com/ciffelia/matplotlib-fontja/actions/workflows/ci.yaml/badge.svg)](https://github.com/ciffelia/matplotlib-fontja/actions/workflows/ci.yaml)
 [![PyPI project](https://badge.fury.io/py/matplotlib-fontja.svg)](https://pypi.org/project/matplotlib-fontja/)
+[![conda-forge](https://img.shields.io/conda/vn/conda-forge/matplotlib-fontja.svg)](https://anaconda.org/conda-forge/matplotlib-fontja)
 
 matplotlibを日本語表示に対応させます。
 
@@ -37,6 +38,9 @@ poetry add matplotlib-fontja
 # Ryeを使う場合
 rye add matplotlib-fontja
 rye sync
+
+# Condaを使う場合
+conda install conda-forge::matplotlib-fontja
 ```
 
 ## 利用フォント
