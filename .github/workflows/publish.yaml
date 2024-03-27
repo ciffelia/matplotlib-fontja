@@ -8,7 +8,7 @@ permissions:
 concurrency: ${{ github.workflow }}
 
 env:
-  RYE_VERSION: 0.16.0
+  RYE_VERSION: 0.31.0
 
 jobs:
   build:
