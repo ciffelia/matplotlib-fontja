@@ -46,7 +46,7 @@ conda install conda-forge::matplotlib-fontja
 ## 利用フォント
 
 IPAexゴシック (Ver.004.01) を利用しています。
-利用にあたっては[IPAフォントライセンスv1.0](https://github.com/ciffelia/matplotlib-fontja/blob/master/japanize_matplotlib/fonts/IPA_Font_License_Agreement_v1.0.txt)に同意してください。
+利用にあたっては[IPAフォントライセンスv1.0](https://github.com/ciffelia/matplotlib-fontja/blob/master/src/matplotlib_fontja/fonts/IPA_Font_License_Agreement_v1.0.txt)に同意してください。
 
 ## FAQ
 
