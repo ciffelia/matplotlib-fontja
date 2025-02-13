@@ -1,4 +1,10 @@
-# 1.0.0 (2024-01-04)
+# Changelog
+
+## 1.0.1 (2025-02-14)
+
+- READMEを修正
+
+## 1.0.0 (2024-01-04)
 
 [japanize-matplotlib](https://github.com/uehara1414/japanize-matplotlib)からの変更点は次のとおりです。
 
