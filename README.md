@@ -29,15 +29,17 @@ plt.show()
 # pipを使う場合
 pip install matplotlib-fontja
 
+# uvを使う場合
+uv add matplotlib-fontja
+
+# Ryeを使う場合
+rye add matplotlib-fontja
+
 # Pipenvを使う場合
 pipenv install matplotlib-fontja
 
 # Poetryを使う場合
 poetry add matplotlib-fontja
-
-# Ryeを使う場合
-rye add matplotlib-fontja
-rye sync
 
 # Condaを使う場合
 conda install conda-forge::matplotlib-fontja
@@ -50,17 +52,54 @@ IPAexゴシック (Ver.004.01) を利用しています。
 
 ## FAQ
 
-### `import matplotlib_fontja`したのに日本語表示になりません [#1](https://github.com/uehara1414/japanize-matplotlib/issues/1)
+### `import matplotlib_fontja`したのに日本語が表示されません
 
-`import matplotlib_fontja`してからmatplotlibでグラフを描画するまでにフォントの設定が変わる処理が入っていると、日本語表示がなされない可能性があります。
+`import matplotlib_fontja`してからグラフを描画するまでにフォントの設定が変わる処理が入っている可能性があります。
 
-例えば、seabornを利用している場合であれば`sns.set()`などで描画フォントが seaborn のデフォルトに上書きされ、日本語表示がされなくなります。
+例えば、seabornを使用していると`sns.set_theme()`などでフォントがseabornのデフォルトに上書きされてしまいます。
 
-`sns.set(font="IPAexGothic")`のように利用フォントに`IPAexGothic`を設定するか、フォント上書き後に`matplotlib_fontja.japanize()`を利用するなどで日本語表示できるはずです。
+以下のように、フォント上書き後に`matplotlib_fontja.japanize()`を実行してください。
 
-### importのみして利用されないコードなのでフォーマッターに消されてしまいます
+```python
+sns.set_theme()
+matplotlib_fontja.japanize()
+```
 
-リンターなどの警告が気になる・コードを消される方向けに`matplotlib_fontja.japanize()`メソッドの実行でもimport時と同じくフォントを設定できるようになっています。
-無意味な実行になりますが、時と場合に応じて実行してください。
+seabornの場合は、`sns.set_theme(font="IPAexGothic")`として`IPAexGothic`を使用するよう設定することもできます。
 
-もしくはリンターごとに無視させる設定をすることで対応できるはずです。`# noqa`などで設定してください。
+### `import matplotlib_fontja`に対してリンターの警告(F401)が出ます/フォーマッターに消されてしまいます
+
+importした`matplotlib_fontja`を使用していないため、不要なimportと誤判定されています。以下のように`noqa`で無効化してください。
+
+```python
+import matplotlib_fontja  # noqa: F401
+```
+
+あるいは、`matplotlib_fontja.japanize()`を使用すれば未使用と判定されません。無意味な実行になりますが、import直後などに追加して警告を消すこともできます。
+
+```python
+import matplotlib_fontja
+
+matplotlib_fontja.japanize()
+```
+
+### IPAexゴシック以外のフォントを使いたいです
+
+matplotlibの標準機能で任意のフォントを使用できます。matplotlib-fontjaは不要です。以下はNoto Sans Japaneseを使う例です。
+
+```python
+import matplotlib.font_manager
+import matplotlib.pyplot as plt
+
+# フォントファイルを読み込み
+matplotlib.font_manager.fontManager.addfont(
+    "/path/to/NotoSansJP-Regular.ttf"
+)
+
+# 読み込んだフォントを使用するよう設定
+matplotlib.rc("font", family="Noto Sans JP")
+
+plt.plot([1, 2, 3, 4])
+plt.xlabel('簡単なグラフ')
+plt.show()
+```
