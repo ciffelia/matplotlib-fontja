@@ -7,5 +7,4 @@ wheels/
 
 .venv
 
-requirements.lock
-requirements-dev.lock
+uv.lock

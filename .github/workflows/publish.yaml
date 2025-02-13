@@ -8,7 +8,7 @@ permissions:
 concurrency: ${{ github.workflow }}
 
 env:
-  RYE_VERSION: 0.31.0
+  UV_VERSION: 0.5.31
 
 jobs:
   build:
@@ -16,17 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Rye
-        run: |
-          TEMP_FILE=$(mktemp)
-          curl -fsSL "https://github.com/mitsuhiko/rye/releases/download/$RYE_VERSION/rye-x86_64-linux.gz" | gunzip > "$TEMP_FILE"
-          chmod +x "$TEMP_FILE"
-          "$TEMP_FILE" self install --yes
-          rm "$TEMP_FILE"
-          echo "$HOME/.rye/shims" >> $GITHUB_PATH
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: false
 
       - name: Build
-        run: rye build
+        run: uv build --no-sources
 
       - name: Upload dist
         uses: actions/upload-artifact@v4
