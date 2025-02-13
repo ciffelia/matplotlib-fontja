@@ -11,8 +11,12 @@ env:
   UV_VERSION: 0.5.31
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -21,28 +25,6 @@ jobs:
           version: ${{ env.UV_VERSION }}
           enable-cache: false
 
-      - name: Build
-        run: uv build --no-sources
+      - run: uv build --no-sources
 
-      - name: Upload dist
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist
-          compression-level: 0
-
-  publish:
-    needs: build
-    runs-on: ubuntu-24.04
-    environment: pypi
-    permissions:
-      id-token: write
-    steps:
-      - name: Download dist
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
-
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - run: uv publish
