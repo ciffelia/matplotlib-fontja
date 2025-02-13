@@ -1,11 +1,11 @@
 name: Publish package to PyPI
 
-on: workflow_dispatch
+on:
+  push:
+    tags: ["**"]
 
 permissions:
   contents: read
-
-concurrency: ${{ github.workflow }}
 
 env:
   UV_VERSION: 0.5.31
