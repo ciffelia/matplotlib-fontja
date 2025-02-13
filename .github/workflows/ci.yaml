@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  RYE_VERSION: 0.31.0
+  UV_VERSION: 0.5.31
 
 jobs:
   run-demo:
@@ -18,14 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ciffelia/setup-rye-action@v1
+      - uses: astral-sh/setup-uv@v5
         with:
-          rye-version: ${{ env.RYE_VERSION }}
+          version: ${{ env.UV_VERSION }}
+          enable-cache: false
 
-      - name: Setup virtualenv
-        run: rye sync
-
-      - run: python demo.py
+      - run: uv run demo.py
 
   create-snapshot:
     name: create-snapshot (py${{ matrix.python_version }}, mpl${{ matrix.matplotlib_version }})
@@ -39,40 +37,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ciffelia/setup-rye-action@v1
+      - uses: astral-sh/setup-uv@v5
         with:
-          rye-version: ${{ env.RYE_VERSION }}
+          version: ${{ env.UV_VERSION }}
+          enable-cache: false
 
-      - name: Generate snapshot path
-        run: |
-          echo "SNAPSHOT_DIR=test/snapshot" >> "$GITHUB_ENV"
-          echo "SNAPSHOT_FILENAME=py${PYTHON_VERSION}_mpl${MATPLOTLIB_VERSION}.png" >> "$GITHUB_ENV"
+      - name: Generate snapshot filename
+        run: echo "SNAPSHOT_FILENAME=py${PYTHON_VERSION}_mpl${MATPLOTLIB_VERSION}.png" >> "$GITHUB_ENV"
         env:
           PYTHON_VERSION: ${{ matrix.python_version }}
           MATPLOTLIB_VERSION: ${{ matrix.matplotlib_version }}
 
       - name: Create a snapshot
         run: |
-          mkdir -p "$SNAPSHOT_DIR"
-          rm -f "$SNAPSHOT_DIR/$SNAPSHOT_FILENAME"
+          mkdir -p snapshot
+          rm -f "snapshot/$SNAPSHOT_FILENAME"
 
-          rye pin "$PYTHON_VERSION" --no-update-requires-python
+          uv python pin "$PYTHON_VERSION"
+          uv add "matplotlib==$MATPLOTLIB_VERSION.*" 'numpy<2'
 
-          rm -f requirements.lock requirements-dev.lock
-          rye add "matplotlib==$MATPLOTLIB_VERSION.*" 'numpy<2'
-          rye sync
-
-          python test/create_snapshot.py "$SNAPSHOT_DIR/$SNAPSHOT_FILENAME"
+          uv run create_snapshot.py "snapshot/$SNAPSHOT_FILENAME"
         env:
           PYTHON_VERSION: ${{ matrix.python_version }}
           MATPLOTLIB_VERSION: ${{ matrix.matplotlib_version }}
+        working-directory: test
         continue-on-error: true
 
       - name: Upload a snapshot
         uses: actions/upload-artifact@v4
         with:
           name: snapshot-${{ env.SNAPSHOT_FILENAME }}
-          path: ${{ env.SNAPSHOT_DIR }}/${{ env.SNAPSHOT_FILENAME }}
+          path: test/snapshot/${{ env.SNAPSHOT_FILENAME }}
           if-no-files-found: ignore
           compression-level: 0
 

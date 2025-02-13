@@ -1,0 +1,13 @@
+[project]
+name = "matplotlib-fontja-test"
+version = "0.1.0"
+dependencies = [
+  "matplotlib-fontja"
+]
+classifiers = ["Private :: Do Not Upload"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+matplotlib-fontja = { path = ".." }
