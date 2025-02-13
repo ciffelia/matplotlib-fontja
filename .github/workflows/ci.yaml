@@ -94,4 +94,6 @@ jobs:
           compression-level: 0
 
       - name: Compare snapshots
-        run: git diff --exit-code -- test/snapshot
+        run: |
+          git add --intent-to-add test/snapshot
+          git diff --exit-code test/snapshot
