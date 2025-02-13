@@ -73,6 +73,7 @@ jobs:
         with:
           name: snapshot-${{ env.SNAPSHOT_FILENAME }}
           path: ${{ env.SNAPSHOT_DIR }}/${{ env.SNAPSHOT_FILENAME }}
+          if-no-files-found: ignore
           compression-level: 0
 
   collect-snapshot:
