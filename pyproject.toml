@@ -14,6 +14,7 @@ maintainers = [
 description = "matplotlibを日本語表示に対応させます。"
 readme = "README.md"
 license = "MIT AND IPA"
+license-files = ["LICENSE", "src/matplotlib_fontja/fonts/IPA_Font_License_Agreement_v1.0.txt"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Framework :: Matplotlib",
