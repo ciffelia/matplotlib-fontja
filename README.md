@@ -45,6 +45,18 @@ poetry add matplotlib-fontja
 conda install conda-forge::matplotlib-fontja
 ```
 
+## 動作確認環境
+
+以下のPythonとMatplotlibのバージョンの組み合わせで動作を確認しています。
+
+- Python 3.7: Matplotlib 3.0 - 3.5
+- Python 3.8: Matplotlib 3.3 - 3.7
+- Python 3.9: Matplotlib 3.3 - 3.9
+- Python 3.10: Matplotlib 3.3 - 3.10
+- Python 3.11: Matplotlib 3.3 - 3.10
+- Python 3.12: Matplotlib 3.5 - 3.10
+- Python 3.13: Matplotlib 3.5 - 3.10
+
 ## 利用フォント
 
 IPAexゴシック (Ver.004.01) を利用しています。
