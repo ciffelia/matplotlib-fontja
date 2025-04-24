@@ -1,6 +1,6 @@
 [project]
 name = "matplotlib-fontja"
-version = "1.0.1"
+version = "1.1.0rc1"
 dependencies = [
     "matplotlib",
 ]
