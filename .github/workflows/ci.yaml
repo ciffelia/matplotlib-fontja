@@ -97,3 +97,15 @@ jobs:
         run: |
           git add --intent-to-add test/snapshot
           git diff --exit-code test/snapshot
+
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: false
+
+      - run: uv build --no-sources
