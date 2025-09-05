@@ -9,18 +9,14 @@ on:
 permissions:
   contents: read
 
-env:
-  UV_VERSION: 0.6.16
-
 jobs:
   run-demo:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: ${{ env.UV_VERSION }}
           enable-cache: false
 
       - run: uv run demo.py
@@ -37,9 +33,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: ${{ env.UV_VERSION }}
           enable-cache: false
 
       - name: Generate snapshot filename
@@ -103,9 +98,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: ${{ env.UV_VERSION }}
           enable-cache: false
 
       - run: uv build --no-sources
