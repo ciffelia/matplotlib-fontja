@@ -4,3 +4,4 @@
 2. `Release x.y.z`というメッセージでコミットを作成し、masterにプッシュします。
 3. CIが通っていることを確認します。
 4. [リリースを作成](https://github.com/ciffelia/matplotlib-fontja/releases/new)します。その際、タグ`x.y.z`を作成します。
+5. GitHub Actionsの`Publish package to PyPI`ワークフローが開始されます。`build`ジョブが成功していることを確認し、`publish`ジョブの実行を承認します。

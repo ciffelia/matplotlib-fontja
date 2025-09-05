@@ -8,7 +8,27 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+
+      - run: uv build --no-sources
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+          if-no-files-found: error
+
   publish:
+    needs: build
     runs-on: ubuntu-24.04
     environment: pypi
     permissions:
@@ -23,6 +43,9 @@ jobs:
         with:
           enable-cache: false
 
-      - run: uv build --no-sources
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
 
       - run: uv publish
