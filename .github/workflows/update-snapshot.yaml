@@ -40,6 +40,6 @@ jobs:
           git switch -c update-snapshots-${{ github.run_id }}
           git add test/snapshot
           git commit -m 'test: update snapshots'
-          gh pr create --dry-run --fill --base "$GITHUB_REF_NAME"
+          gh pr create --dry-run --fill --head update-snapshots-${{ github.run_id }} --base "$GITHUB_REF_NAME"
         env:
           GH_TOKEN: ${{ github.token }}
