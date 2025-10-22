@@ -56,6 +56,7 @@ jobs:
           name: ${{ inputs.artifact-name }}-${{ env.SNAPSHOT_FILENAME }}
           path: test/snapshot/${{ env.SNAPSHOT_FILENAME }}
           compression-level: 0
+          if-no-files-found: ignore
 
   collect-snapshot:
     needs: take-snapshot
