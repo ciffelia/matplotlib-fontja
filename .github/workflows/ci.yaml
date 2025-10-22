@@ -13,11 +13,11 @@ jobs:
   run-demo:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
 
@@ -33,11 +33,11 @@ jobs:
         matplotlib_version:
           ['3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '3.10']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
 
@@ -74,14 +74,14 @@ jobs:
     needs: create-snapshot
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
       - run: rm -rf test/snapshot
 
       - name: Download all snapshots
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: test/snapshot
           pattern: snapshot-*
@@ -102,11 +102,11 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
 
