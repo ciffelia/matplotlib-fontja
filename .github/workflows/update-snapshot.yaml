@@ -1,4 +1,4 @@
-name: CI
+name: Update snapshot
 
 on:
   workflow_dispatch:
