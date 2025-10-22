@@ -15,6 +15,8 @@ jobs:
   create-pr:
     needs: create-snapshot
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
         with:
@@ -28,19 +30,16 @@ jobs:
           name: snapshot
           path: test/snapshot
 
-      - name: Compare snapshots
-        id: compare-snapshots
-        run: |
-          git add test/snapshot
-          set +e
-          git diff --staged --exit-code test/snapshot
-          echo "diff=$?" >> "$GITHUB_OUTPUT"
-
-      - name: Create a pull request
-        if: steps.compare-snapshots.outputs.diff != '0'
+      - name: Configure git author
         run: |
           git config user.name 'github-actions'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Create a pull request
+        run: |
           git switch -c update-snapshots-${{ github.run_id }}
+          git add test/snapshot
           git commit -m 'test: update snapshots'
           gh pr create --dry-run --fill --base "$GITHUB_REF_NAME"
+        env:
+          GH_TOKEN: ${{ github.token }}
