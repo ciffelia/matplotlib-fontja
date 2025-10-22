@@ -20,8 +20,6 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v5
-        with:
-          persist-credentials: false
 
       - run: rm -rf test/snapshot
 
@@ -41,6 +39,7 @@ jobs:
           git switch -c update-snapshots-${{ github.run_id }}
           git add test/snapshot
           git commit -m 'test: update snapshots'
-          gh pr create --fill --head update-snapshots-${{ github.run_id }} --base "$GITHUB_REF_NAME"
+          git push origin update-snapshots-${{ github.run_id }}
+          gh pr create --fill --base "$GITHUB_REF_NAME"
         env:
           GH_TOKEN: ${{ github.token }}
