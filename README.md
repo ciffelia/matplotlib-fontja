@@ -55,6 +55,7 @@ conda install conda-forge::matplotlib-fontja
 - Python 3.11: Matplotlib 3.3 - 3.10
 - Python 3.12: Matplotlib 3.5 - 3.10
 - Python 3.13: Matplotlib 3.5 - 3.10
+- Python 3.14: Matplotlib 3.10
 
 ## 利用フォント
 
