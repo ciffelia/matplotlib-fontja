@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  create-snapshot:
+    uses: ./.github/workflows/create-snapshot.yaml
+    with:
+      artifact-name: snapshot
+
+  create-pr:
+    needs: create-snapshot
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - run: rm -rf test/snapshot
+
+      - name: Download snapshots
+        uses: actions/download-artifact@v5
+        with:
+          name: snapshot
+          path: test/snapshot
+
+      - name: Compare snapshots
+        id: compare-snapshots
+        run: |
+          git add --intent-to-add test/snapshot
+          set +e
+          git diff --exit-code test/snapshot
+          echo "diff=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Create a pull request
+        if: steps.compare-snapshots.outputs.diff != '0'
+        run: |
+          git config user.name 'github-actions'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c update-snapshots-${{ github.run_id }}
+          git commit -m 'test: update snapshots'
+          gh pr create --dry-run --fill --base "$GITHUB_REF_NAME"
