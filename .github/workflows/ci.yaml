@@ -23,82 +23,6 @@ jobs:
 
       - run: uv run demo.py
 
-  create-snapshot:
-    name: create-snapshot (py${{ matrix.python_version }}, mpl${{ matrix.matplotlib_version }})
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        python_version: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
-        matplotlib_version:
-          ['3.3', '3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '3.10']
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-
-      - uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: false
-
-      - name: Generate snapshot filename
-        run: echo "SNAPSHOT_FILENAME=py${PYTHON_VERSION}_mpl${MATPLOTLIB_VERSION}.png" >> "$GITHUB_ENV"
-        env:
-          PYTHON_VERSION: ${{ matrix.python_version }}
-          MATPLOTLIB_VERSION: ${{ matrix.matplotlib_version }}
-
-      - name: Create a snapshot
-        run: |
-          mkdir -p snapshot
-          rm -f "snapshot/$SNAPSHOT_FILENAME"
-
-          uv python pin "$PYTHON_VERSION"
-          uv add "matplotlib==$MATPLOTLIB_VERSION.*" 'numpy<2'
-
-          uv run create_snapshot.py "snapshot/$SNAPSHOT_FILENAME"
-        env:
-          PYTHON_VERSION: ${{ matrix.python_version }}
-          MATPLOTLIB_VERSION: ${{ matrix.matplotlib_version }}
-        working-directory: test
-        continue-on-error: true
-
-      - name: Upload a snapshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshot-${{ env.SNAPSHOT_FILENAME }}
-          path: test/snapshot/${{ env.SNAPSHOT_FILENAME }}
-          if-no-files-found: ignore
-          compression-level: 0
-
-  collect-snapshot:
-    needs: create-snapshot
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          persist-credentials: false
-
-      - run: rm -rf test/snapshot
-
-      - name: Download all snapshots
-        uses: actions/download-artifact@v5
-        with:
-          path: test/snapshot
-          pattern: snapshot-*
-          merge-multiple: true
-
-      - name: Upload all snapshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: snapshot
-          path: test/snapshot
-          compression-level: 0
-
-      - name: Compare snapshots
-        run: |
-          git add --intent-to-add test/snapshot
-          git diff --exit-code test/snapshot
-
   build:
     runs-on: ubuntu-24.04
     steps:
@@ -111,3 +35,29 @@ jobs:
           enable-cache: false
 
       - run: uv build --no-sources
+
+  create-snapshot:
+    uses: ./.github/workflows/create-snapshot.yaml
+    with:
+      artifact-name: snapshot
+
+  compare-snapshot:
+    needs: create-snapshot
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - run: rm -rf test/snapshot
+
+      - name: Download snapshots
+        uses: actions/download-artifact@v5
+        with:
+          name: snapshot
+          path: test/snapshot
+
+      - name: Compare snapshots
+        run: |
+          git add --intent-to-add test/snapshot
+          git diff --exit-code test/snapshot
