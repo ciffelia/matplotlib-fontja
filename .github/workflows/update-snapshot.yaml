@@ -31,9 +31,9 @@ jobs:
       - name: Compare snapshots
         id: compare-snapshots
         run: |
-          git add --intent-to-add test/snapshot
+          git add test/snapshot
           set +e
-          git diff --exit-code test/snapshot
+          git diff --staged --exit-code test/snapshot
           echo "diff=$?" >> "$GITHUB_OUTPUT"
 
       - name: Create a pull request
